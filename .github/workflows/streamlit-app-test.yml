@@ -1,0 +1,28 @@
+name: Streamlit App Test # Name of github action
+on:
+  workflow_dispatch: # Manually trigger the workflow
+  schedule:
+    - cron: "30 21 * * *" # Run at 21:30 hrs [UTC] everyday
+  push:
+    branches: [main] # Run when code is pushed to the main branch
+  pull_request:
+    branches: [main] # Run for pull requests that target the main branch
+permissions:
+  contents: read # Read the contents of the repository
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          python-version: "3.12"
+      - uses: streamlit/streamlit-app-action@v0.0.3
+        with:
+          app-path: login.py
+          pytest-args: -v --junit-xml=test-results.xml
+      - if: always()
+        uses: pmeier/pytest-results-action@v0.6.0
+        with:
+          path: test-results.xml
+          summary: true
+          display-options: fEsp
