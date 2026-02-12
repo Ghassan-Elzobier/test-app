@@ -16,10 +16,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: uv sync
+
       - uses: streamlit/streamlit-app-action@v0.0.3
         with:
           app-path: login.py
           pytest-args: -v --junit-xml=test-results.xml
+
       - if: always()
         uses: pmeier/pytest-results-action@v0.6.0
         with:
